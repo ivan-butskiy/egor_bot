@@ -27,6 +27,3 @@ class User:
 
     def __hash__(self) -> int:
         return hash(self.tg_id)
-
-    # def __repr__(self) -> str:
-    #     return f'<User (tg_id={self.tg_id}, user_name={self.user_name}, first_name={self.first_name}, last_name={self.last_name} type={self.type})>'

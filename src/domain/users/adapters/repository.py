@@ -8,6 +8,7 @@ from src.domain.users.domain import User
 
 
 class AbstractRepository(abc.ABC):
+
     def __init__(self):
         self.seen = set()  # type: Set[User]
 
@@ -21,11 +22,11 @@ class AbstractRepository(abc.ABC):
             self.seen.add(user)
         return user
 
-    @abc.abstractmethod
+    # @abc.abstractmethod
     async def _add(self, user: User):
         raise NotImplementedError
 
-    @abc.abstractmethod
+    # @abc.abstractmethod
     async def _get(self, tg_id) -> User:
         raise NotImplementedError
 
@@ -36,7 +37,7 @@ class SqlAlchemyRepository(AbstractRepository):
         super().__init__()
         self.session = session
 
-    async def _add(self, user: User):
+    async def _add(self, user: User) -> None:
         self.session.add(user)
 
     async def _get(self, tg_id: int) -> User | None:

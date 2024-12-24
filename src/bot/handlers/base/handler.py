@@ -5,6 +5,7 @@ from aiogram.types import Message
 
 from src.domain.users import User
 from src.bot.handlers.utils import auth_decorator
+from . import keyboards as kb
 
 
 base_router = Router()
@@ -14,11 +15,12 @@ base_router = Router()
 @auth_decorator
 async def handle_start(message: Message, user: User) -> None:
     """
-    This handler receives messages with `/start` command
+    This handler receives messages with /start` command
     """
     await message.answer(
         f'Привіт, {html.bold(message.from_user.full_name)}! '
         f'Оберіть необхідну дію:',
+        reply_markup=kb.get_start_keyboard(user)
     )
 
 
