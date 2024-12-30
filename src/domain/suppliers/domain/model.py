@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 class MessengerTypeEnum(enum.StrEnum):
     telegram = 'telegram'
-    viber = 'viber'
     whatsapp = 'whatsapp'
 
 
