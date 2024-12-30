@@ -10,4 +10,10 @@ async def get_suppliers(
         uow: AbstractUnitOfWork
 ) -> List[Supplier]:
     async with uow:
-        return await uow.suppliers.get_list(limit, offset)
+        items = await uow.suppliers.get_list(limit, offset)
+        return items
+
+
+async def get_suppliers_count(uow: AbstractUnitOfWork) -> int:
+    async with uow:
+        return await uow.suppliers.count()

@@ -20,7 +20,7 @@ async def handle_start(message: Message, user: User) -> None:
     await message.answer(
         f'Привіт, {html.bold(message.from_user.full_name)}! '
         f'Оберіть необхідну дію:',
-        reply_markup=kb.get_start_keyboard(user)
+        reply_markup=kb.get_start_keyboard(user),
     )
 
 

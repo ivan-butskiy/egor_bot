@@ -27,6 +27,9 @@ class AbstractRepository(abc.ABC):
         self.seen.union(res)
         return await self._get_list(limit, offset)
 
+    async def count(self) -> int:
+        return await self._count()
+
     @abc.abstractmethod
     async def _add(self, user: Supplier):
         raise NotImplementedError
@@ -37,6 +40,10 @@ class AbstractRepository(abc.ABC):
 
     @abc.abstractmethod
     async def _get_list(self, limit: int, offset: int):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def _count(self) -> int:
         raise NotImplementedError
 
 
@@ -67,3 +74,12 @@ class SqlAlchemyRepository(AbstractRepository):
             )
         )
         return list(res.scalars())
+
+    async def _count(self) -> int:
+        stmt = (
+            sa.select(sa.func.count(1))
+            .select_from(Supplier)
+        )
+
+        res = await self.session.execute(stmt)
+        return res.scalar()
