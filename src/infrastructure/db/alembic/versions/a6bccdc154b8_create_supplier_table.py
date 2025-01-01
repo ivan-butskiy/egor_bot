@@ -28,7 +28,7 @@ def upgrade() -> None:
         sa.Column('title', sa.String(255), nullable=False, unique=True),
         sa.Column('alias', sa.String(255), nullable=False, unique=True),
         sa.Column('messenger', sa.Enum(MessengerTypeEnum), nullable=False),
-        sa.Column('phone', sa.String(32), nullable=False),
+        sa.Column('phone', sa.String(32), nullable=False, unique=True),
     )
 
 

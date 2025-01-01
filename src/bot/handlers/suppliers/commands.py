@@ -3,5 +3,16 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class SuppliersCommands:
-    get_suppliers: str = 'Обрати постачальника 👉'
-    add_supplier: str = 'Додати постачальника ✅'
+    get_suppliers: str = '🚚 Обрати постачальника'
+    create_order: str = '📦 Створити замовлення'
+
+    # compatible to admin
+    add_supplier: str = '✅ Додати постачальника'
+    edit_supplier: str = '📝 Редагувати'
+    remove_supplier: str = '❌ Видалити'
+
+
+@dataclass(frozen=True)
+class SuppliersCallback:
+    paginate_suppliers: str = 'paginate_suppliers_'
+    supplier_item: str = 'supplier_item_'
