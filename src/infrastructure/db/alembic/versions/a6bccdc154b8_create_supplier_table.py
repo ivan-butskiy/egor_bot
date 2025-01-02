@@ -10,9 +10,6 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-from src.domain.suppliers.domain.model import MessengerTypeEnum
-
-
 
 # revision identifiers, used by Alembic.
 revision: str = 'a6bccdc154b8'
@@ -24,14 +21,13 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         'supplier',
-        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('tg_id', sa.Integer, primary_key=True),
         sa.Column('title', sa.String(255), nullable=False, unique=True),
         sa.Column('alias', sa.String(255), nullable=False, unique=True),
-        sa.Column('messenger', sa.Enum(MessengerTypeEnum), nullable=False),
-        sa.Column('phone', sa.String(32), nullable=False, unique=True),
+
+        sa.PrimaryKeyConstraint('tg_id')
     )
 
 
 def downgrade() -> None:
     op.drop_table('supplier')
-    op.execute('DROP TYPE IF EXISTS messengertypeenum;')

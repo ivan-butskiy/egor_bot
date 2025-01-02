@@ -6,4 +6,4 @@ class PaginateSuppliersFilter(CallbackData, prefix='paginate_suppliers'):
 
 
 class SupplierItemFilter(CallbackData, prefix='supplier_item'):
-    id: int
+    tg_id: int

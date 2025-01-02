@@ -8,16 +8,17 @@ from src.domain.users import User
 from src.bot.handlers.utils import auth_decorator
 from src.bot.handlers.base import commands as base_cmd
 from src.bot.handlers.base.keyboards import get_start_keyboard
+from .handlers.create import router as create_router
 from . import keyboards as kb
 from . import commands as cmd
 from . import filters
 
 
-suppliers_router = Router(name=__name__)
+router = Router(name=__name__)
 suppliers_bootstrap = suppliers_bootstrap()
 
 
-@suppliers_router.message(F.text == base_cmd.StartKbCommands.suppliers)
+@router.message(F.text == base_cmd.StartKbCommands.suppliers)
 @auth_decorator
 async def handle_suppliers(message: types.Message, user: User):
     count = await views.get_suppliers_count(suppliers_bootstrap.uow)
@@ -33,7 +34,7 @@ async def handle_suppliers(message: types.Message, user: User):
     )
 
 
-@suppliers_router.message(F.text == cmd.SuppliersCommands.get_suppliers)
+@router.message(F.text == cmd.SuppliersCommands.get_suppliers)
 @auth_decorator
 async def handle_get_suppliers(message: types.Message, user: User):
     items, count = await views.get_suppliers(suppliers_bootstrap.uow, 0)
@@ -44,7 +45,7 @@ async def handle_get_suppliers(message: types.Message, user: User):
     )
 
 
-@suppliers_router.callback_query(filters.PaginateSuppliersFilter.filter())
+@router.callback_query(filters.PaginateSuppliersFilter.filter())
 @auth_decorator
 async def handle_paginate_suppliers(
         callback_query: types.CallbackQuery,
@@ -61,14 +62,14 @@ async def handle_paginate_suppliers(
     )
 
 
-@suppliers_router.callback_query(filters.SupplierItemFilter.filter())
+@router.callback_query(filters.SupplierItemFilter.filter())
 @auth_decorator
 async def handle_supplier_item(
         callback_query: types.CallbackQuery,
         callback_data: filters.SupplierItemFilter,
         user: User
 ):
-    supplier: Supplier = await views.get_supplier(suppliers_bootstrap.uow, callback_data.id)
+    supplier: Supplier = await views.get_supplier(suppliers_bootstrap.uow, callback_data.tg_id)
 
     if user.is_admin:
         text = f'{supplier.title} ({supplier.alias})'
@@ -81,3 +82,8 @@ async def handle_supplier_item(
         text=html.bold(text),
         reply_markup=kb.get_supplier_item_kb(user)
     )
+
+
+router.include_routers(
+    create_router
+)

@@ -14,7 +14,7 @@ def get_suppliers_kb(count: int) -> types.ReplyKeyboardMarkup:
     if count:
         buttons.append([types.KeyboardButton(text=cmd.SuppliersCommands.get_suppliers)])
 
-    buttons.append([types.KeyboardButton(text=cmd.SuppliersCommands.add_supplier)])
+    buttons.append([types.KeyboardButton(text=cmd.SuppliersCommands.create_supplier)])
 
     return types.ReplyKeyboardMarkup(
         keyboard=buttons,
@@ -34,7 +34,7 @@ def get_suppliers_list_kb(
     buttons = [
         [types.InlineKeyboardButton(
             text=i.title if user.is_admin else i.alias,
-            callback_data=filters.SupplierItemFilter(id=i.id).pack())]
+            callback_data=filters.SupplierItemFilter(tg_id=i.tg_id).pack())]
         for i in items
     ]
 

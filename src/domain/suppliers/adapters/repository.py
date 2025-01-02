@@ -56,11 +56,11 @@ class SqlAlchemyRepository(AbstractRepository):
     async def _add(self, supplier: Supplier) -> None:
         self.seen.add(supplier)
 
-    async def _get(self, id_: int) -> Supplier:
+    async def _get(self, tg_id: int) -> Supplier:
         res = await (
             self.session.execute(
                 sa.select(Supplier)
-                .where(Supplier.id == id_)
+                .where(Supplier.tg_id == tg_id)
             )
         )
         return res.scalar()

@@ -7,6 +7,6 @@ class SuppliersCommands:
     create_order: str = '📦 Створити замовлення'
 
     # compatible to admin
-    add_supplier: str = '✅ Додати постачальника'
+    create_supplier: str = '✅ Додати постачальника'
     edit_supplier: str = '📝 Редагувати'
     remove_supplier: str = '❌ Видалити'
