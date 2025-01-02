@@ -10,9 +10,3 @@ class SuppliersCommands:
     add_supplier: str = '✅ Додати постачальника'
     edit_supplier: str = '📝 Редагувати'
     remove_supplier: str = '❌ Видалити'
-
-
-@dataclass(frozen=True)
-class SuppliersCallback:
-    paginate_suppliers: str = 'paginate_suppliers_'
-    supplier_item: str = 'supplier_item_'

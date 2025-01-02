@@ -14,11 +14,11 @@ users_bootstrap = users_bootstrap()
 def auth_decorator(func: Callable) -> Any:
     @wraps(func)
     async def wrapper(*args, **kwargs):
-        if tel_obj := next(filter(lambda a: isinstance(a, (types.Message, types.CallbackQuery)), args), None):
-            if not (user := await user_views.get_user(tel_obj.from_user.id, users_bootstrap.uow)):
+        if event := next(filter(lambda a: isinstance(a, (types.Message, types.CallbackQuery)), args), None):
+            if not (user := await user_views.get_user(event.from_user.id, users_bootstrap.uow)):
                 return
-            sig_params = extend_parameters(func, user, users_bootstrap)
-            await func(*args, **sig_params)
+            sig_params = extend_parameters(func, user, users_bootstrap, *args)
+            await func(**sig_params, **kwargs)
         else:
             await func(*args)
     return wrapper

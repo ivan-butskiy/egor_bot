@@ -10,9 +10,10 @@ from src.bot.handlers.base import commands as base_cmd
 from src.bot.handlers.base.keyboards import get_start_keyboard
 from . import keyboards as kb
 from . import commands as cmd
+from . import filters
 
 
-suppliers_router = Router()
+suppliers_router = Router(name=__name__)
 suppliers_bootstrap = suppliers_bootstrap()
 
 
@@ -43,10 +44,14 @@ async def handle_get_suppliers(message: types.Message, user: User):
     )
 
 
-@suppliers_router.callback_query(F.data.startswith(cmd.SuppliersCallback.paginate_suppliers))
+@suppliers_router.callback_query(filters.PaginateSuppliersFilter.filter())
 @auth_decorator
-async def handle_paginate_suppliers(callback_query: types.CallbackQuery, user: User):
-    page: int = int(callback_query.data.split('_')[-1])
+async def handle_paginate_suppliers(
+        callback_query: types.CallbackQuery,
+        callback_data: filters.PaginateSuppliersFilter,
+        user: User
+):
+    page = callback_data.page
     limit = 10
     items, count = await views.get_suppliers(suppliers_bootstrap.uow, (page - 1) * limit, limit)
     markup = kb.get_suppliers_list_kb(items=items, count=count, user=user, page=page)
@@ -56,11 +61,14 @@ async def handle_paginate_suppliers(callback_query: types.CallbackQuery, user: U
     )
 
 
-@suppliers_router.callback_query(F.data.startswith(cmd.SuppliersCallback.supplier_item))
+@suppliers_router.callback_query(filters.SupplierItemFilter.filter())
 @auth_decorator
-async def handle_supplier_item(callback_query: types.CallbackQuery, user: User):
-    item_id: int = int(callback_query.data.split('_')[-1])
-    supplier: Supplier = await views.get_supplier(suppliers_bootstrap.uow, item_id)
+async def handle_supplier_item(
+        callback_query: types.CallbackQuery,
+        callback_data: filters.SupplierItemFilter,
+        user: User
+):
+    supplier: Supplier = await views.get_supplier(suppliers_bootstrap.uow, callback_data.id)
 
     if user.is_admin:
         text = f'{supplier.title} ({supplier.alias})'

@@ -8,7 +8,7 @@ from src.bot.handlers.utils import auth_decorator
 from . import keyboards as kb
 
 
-base_router = Router()
+base_router = Router(name=__name__)
 
 
 @base_router.message(CommandStart())

@@ -5,6 +5,7 @@ from aiogram import types
 from src.bot.handlers.suppliers import commands as cmd
 from src.domain.suppliers import Supplier
 from src.domain.users import User
+from . import filters
 
 
 def get_suppliers_kb(count: int) -> types.ReplyKeyboardMarkup:
@@ -33,7 +34,7 @@ def get_suppliers_list_kb(
     buttons = [
         [types.InlineKeyboardButton(
             text=i.title if user.is_admin else i.alias,
-            callback_data=f'{cmd.SuppliersCallback.supplier_item}{i.id}')]
+            callback_data=filters.SupplierItemFilter(id=i.id).pack())]
         for i in items
     ]
 
@@ -42,15 +43,15 @@ def get_suppliers_list_kb(
         if page != 1:
             paginate_buttons.append(
                 types.InlineKeyboardButton(
-                    text='⬅ назад',
-                    callback_data=f'{cmd.SuppliersCallback.paginate_suppliers}{page - 1}'
+                    text='⬅ Назад',
+                    callback_data=filters.PaginateSuppliersFilter(page=page - 1).pack()
                 )
             )
         if count > page * page_size:
             paginate_buttons.append(
                 types.InlineKeyboardButton(
-                    text='вперед ➡',
-                    callback_data=f'{cmd.SuppliersCallback.paginate_suppliers}{page + 1}'
+                    text='Вперед ➡',
+                    callback_data=filters.PaginateSuppliersFilter(page=page + 1).pack()
                 )
             )
         buttons.append(paginate_buttons)
