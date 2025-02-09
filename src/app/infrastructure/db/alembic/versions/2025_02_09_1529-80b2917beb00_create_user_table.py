@@ -1,8 +1,8 @@
 """create user table
 
-Revision ID: ffbf1c4221ef
+Revision ID: 80b2917beb00
 Revises: 
-Create Date: 2024-12-15 12:59:20.600065
+Create Date: 2025-02-09 15:29:42.319457
 
 """
 from typing import Sequence, Union
@@ -14,7 +14,7 @@ from src.users.domain.model import UserTypeEnum
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ffbf1c4221ef'
+revision: str = '80b2917beb00'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,7 +24,6 @@ def upgrade() -> None:
     op.create_table(
         'user',
         sa.Column('tg_id', sa.Integer, primary_key=True),
-        sa.Column('user_name', sa.String(length=256), nullable=False),
         sa.Column('first_name', sa.String(length=256), nullable=False),
         sa.Column('last_name', sa.String(length=256)),
         sa.Column('type', sa.Enum(UserTypeEnum), nullable=False),

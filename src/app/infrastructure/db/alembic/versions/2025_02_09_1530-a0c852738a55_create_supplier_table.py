@@ -1,8 +1,8 @@
 """create supplier table
 
-Revision ID: a6bccdc154b8
-Revises: ffbf1c4221ef
-Create Date: 2024-12-23 20:48:27.584949
+Revision ID: a0c852738a55
+Revises: 80b2917beb00
+Create Date: 2025-02-09 15:30:18.095945
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'a6bccdc154b8'
-down_revision: Union[str, None] = 'ffbf1c4221ef'
+revision: str = 'a0c852738a55'
+down_revision: Union[str, None] = '80b2917beb00'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

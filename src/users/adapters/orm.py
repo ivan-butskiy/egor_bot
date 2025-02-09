@@ -8,7 +8,6 @@ user = sa.Table(
     'user',
     mapper.metadata,
     sa.Column('tg_id', sa.Integer, primary_key=True),
-    sa.Column('user_name', sa.String(length=256), nullable=False),
     sa.Column('first_name', sa.String(length=256), nullable=False),
     sa.Column('last_name', sa.String(length=256), nullable=False),
     sa.Column('type', sa.Enum(UserTypeEnum), nullable=False)

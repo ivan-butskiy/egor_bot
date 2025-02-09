@@ -10,7 +10,6 @@ class UserTypeEnum(enum.StrEnum):
 @dataclass
 class User:
     tg_id: int
-    user_name: str
     first_name: str
     last_name: str = field(default=None)
     type: UserTypeEnum = field(default=UserTypeEnum.manager)
