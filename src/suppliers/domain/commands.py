@@ -1,12 +1,9 @@
 from dataclasses import dataclass
-
-
-class Command:
-    pass
+from src.app.domain.commands import BaseCommand
 
 
 @dataclass
-class CreateSupplier(Command):
+class CreateSupplier(BaseCommand):
     tg_id: int
     title: str
     alias: str

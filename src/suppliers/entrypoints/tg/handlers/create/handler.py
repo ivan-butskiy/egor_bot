@@ -10,6 +10,7 @@ from src.users import User
 from src.suppliers import views
 from src.suppliers.bootstrap import bootstrap
 from src.suppliers.entrypoints.tg import commands as suppliers_cmd
+from src.suppliers.domain.commands import CreateSupplier
 from .states import CreateSupplierState
 
 
@@ -75,7 +76,6 @@ async def _get_alias_response(message: types.Message, state: FSMContext):
 
 
 async def _get_approve_response(message: types.Message, state: FSMContext, user: User):
-    await state.update_data(alias=message.text)
     await message.answer(
         text='Додано! 🎉',
         reply_markup=base_kbs.get_start_kb(user)
@@ -132,6 +132,13 @@ async def handle_supplier_back(message: types.Message, state: FSMContext):
 @router.message(CreateSupplierState.approve, F.text == 'Підтвердити ✅')
 @auth_decorator
 async def handle_approve(message: types.Message, state: FSMContext, user: User):
+    data: dict = await state.get_data()
+    cmd = CreateSupplier(
+        tg_id=data['contact'],
+        title=data['title'],
+        alias=data['alias']
+    )
+    await bootstrap.handle(cmd)
     await _get_approve_response(message, state, user)
 
 
