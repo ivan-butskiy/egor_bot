@@ -7,19 +7,18 @@ from src.app.entrypoints.tg.utils import auth_decorator
 from src.app.entrypoints.tg.handlers import commands as base_cmd
 from src.app.entrypoints.tg.handlers.keyboards import get_start_kb
 from src.suppliers import views, Supplier
-from src.suppliers.bootstrap import bootstrap as suppliers_bootstrap
+from src.suppliers.bootstrap import bootstrap
 from src.suppliers.entrypoints.tg.handlers.create import router as create_router
 from src.suppliers.entrypoints.tg import commands as cmd, keyboards as kb, filters
 
 
 router = Router(name=__name__)
-suppliers_bootstrap = suppliers_bootstrap()
 
 
 @router.message(F.text == base_cmd.StartKbCommands.suppliers)
 @auth_decorator
 async def handle_suppliers(message: types.Message, user: User):
-    count = await views.get_suppliers_count(suppliers_bootstrap.uow)
+    count = await views.get_suppliers_count(bootstrap.uow)
     if not user.is_admin and not count:
         markup = get_start_kb(user)
         text = 'Наразі немає жодного постачальника. Оберіть дію'
@@ -35,7 +34,7 @@ async def handle_suppliers(message: types.Message, user: User):
 @router.message(F.text == cmd.SuppliersCommands.get_suppliers)
 @auth_decorator
 async def handle_get_suppliers(message: types.Message, user: User):
-    items, count = await views.get_suppliers(suppliers_bootstrap.uow, 0)
+    items, count = await views.get_suppliers(bootstrap.uow)
     markup = kb.get_suppliers_list_kb(items=items, count=count, user=user)
     await message.answer(
         text='Оберіть постачальника:',
@@ -52,7 +51,7 @@ async def handle_paginate_suppliers(
 ):
     page = callback_data.page
     limit = 10
-    items, count = await views.get_suppliers(suppliers_bootstrap.uow, (page - 1) * limit, limit)
+    items, count = await views.get_suppliers(bootstrap.uow, (page - 1) * limit, limit)
     markup = kb.get_suppliers_list_kb(items=items, count=count, user=user, page=page)
     await callback_query.message.edit_text(
         text=f'Постачальники, сторінка {page}',
@@ -67,7 +66,7 @@ async def handle_supplier_item(
         callback_data: filters.SupplierItemFilter,
         user: User
 ):
-    supplier: Supplier = await views.get_supplier(suppliers_bootstrap.uow, callback_data.tg_id)
+    supplier: Supplier = await views.get_supplier(bootstrap.uow, callback_data.tg_id)
 
     if user.is_admin:
         text = f'{supplier.title} ({supplier.alias})'

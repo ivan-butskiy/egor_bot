@@ -1,7 +1,8 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class UserState(StatesGroup):
-    username = State()
+class CreateSupplierState(StatesGroup):
+    contact = State()
     title = State()
     alias = State()
+    approve = State()

@@ -1,6 +1,7 @@
 from aiogram import types
 
 from src.app.entrypoints.tg.handlers import commands as cmd
+from src.app.entrypoints.tg.handlers.callbacks import BackCallback
 from src.users import User
 
 
@@ -27,4 +28,12 @@ def get_start_kb(user: User) -> types.ReplyKeyboardMarkup:
         ],
         resize_keyboard=True,
         input_field_placeholder='Оберіть дію'
+    )
+
+
+def get_inline_nav_keyboard(entity: str):
+    return types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [types.InlineKeyboardButton(text='Назад ⬅', callback_data=BackCallback(entity=entity).pack())]
+        ]
     )

@@ -6,7 +6,7 @@ from src.suppliers import Supplier
 
 async def get_suppliers(
         uow: AbstractUnitOfWork,
-        offset: int,
+        offset: int = 0,
         limit: int = 10,
 ) -> Tuple[List[Supplier], int]:
     async with uow:
@@ -23,3 +23,18 @@ async def get_supplier(uow: AbstractUnitOfWork, tg_id: int) -> Supplier:
 async def get_suppliers_count(uow: AbstractUnitOfWork) -> int:
     async with uow:
         return await uow.suppliers.count()
+
+
+async def exists_suppliers(uow: AbstractUnitOfWork) -> bool:
+    async with uow:
+        return await uow.suppliers.exists()
+
+
+async def check_supplier_title(uow: AbstractUnitOfWork, title: str) -> bool:
+    async with uow:
+        return not await uow.suppliers.exists_by_title(title)
+
+
+async def check_supplier_alias(uow: AbstractUnitOfWork, alias: str) -> bool:
+    async with uow:
+        return not await uow.suppliers.exists_by_alias(alias)
