@@ -6,7 +6,7 @@ from aiogram.filters.callback_data import CallbackData
 class SupplierItemActionEnum(enum.StrEnum):
     get = 'get'
     edit = 'edit'
-    remove = 'remove'
+    delete = 'delete'
     create_order = 'create_order'
 
 

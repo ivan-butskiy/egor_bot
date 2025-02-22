@@ -15,3 +15,8 @@ class UpdateSupplier(BaseCommand):
     new_tg_id: int = None
     title: str = None
     alias: str = None
+
+
+@dataclass
+class DeleteSupplier(BaseCommand):
+    tg_id: int

@@ -28,9 +28,16 @@ async def update_supplier(cmd: commands.UpdateSupplier, uow: AbstractUnitOfWork)
         await uow.commit()
 
 
+async def delete_supplier(cmd: commands.DeleteSupplier, uow: AbstractUnitOfWork):
+    async with uow:
+        await uow.suppliers.delete(cmd.tg_id)
+        await uow.commit()
+
+
 COMMAND_HANDLERS = {
     commands.CreateSupplier: create_supplier,
-    commands.UpdateSupplier: update_supplier
+    commands.UpdateSupplier: update_supplier,
+    commands.DeleteSupplier: delete_supplier
 }
 
 

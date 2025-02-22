@@ -8,14 +8,15 @@ from src.app.entrypoints.tg.handlers import commands as base_cmd
 from src.app.entrypoints.tg.handlers.keyboards import get_start_kb
 from src.suppliers import views, Supplier
 from src.suppliers.bootstrap import bootstrap
-from src.suppliers.entrypoints.tg.handlers.create import router as create_router
-from src.suppliers.entrypoints.tg.handlers.update import router as update_router
 from src.suppliers.entrypoints.tg import commands as cmd, keyboards as kb
 from src.suppliers.entrypoints.tg.filters import (
     SupplierItemFilter,
     PaginateSuppliersFilter,
     SupplierItemActionEnum
 )
+from .update import router as update_router
+from .create import router as create_router
+from .delete import router as delete_router
 
 
 router = Router(name=__name__)
@@ -89,5 +90,6 @@ async def handle_supplier_item(
 
 router.include_routers(
     create_router,
-    update_router
+    update_router,
+    delete_router
 )

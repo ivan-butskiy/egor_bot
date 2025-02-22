@@ -33,7 +33,8 @@ async def handle_edit_supplier(
     )
 
     await callback_query.answer()
-    await callback_query.message.reply(
+    await callback_query.bot.send_message(
+        chat_id=callback_query.from_user.id,
         text=text,
         reply_markup=get_edit_supplier_kb(callback_data.tg_id)
     )

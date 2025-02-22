@@ -22,6 +22,9 @@ class AbstractRepository(abc.ABC):
             self.seen.add(user)
         return user
 
+    async def delete(self, id_: int) -> None:
+        await self._delete(id_)
+
     async def get_list(self, limit: int, offset: int) -> List[Supplier]:
         res = await self._get_list(limit, offset)
         self.seen.union(res)
@@ -45,6 +48,10 @@ class AbstractRepository(abc.ABC):
 
     @abc.abstractmethod
     async def _get(self, tg_id, exclude_id: int = None) -> Supplier:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def _delete(self, id_: int) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -84,6 +91,10 @@ class SqlAlchemyRepository(AbstractRepository):
             stmt = stmt.where(Supplier.tg_id != exclude_id)
         res = await self.session.execute(stmt)
         return res.scalar()
+
+    async def _delete(self, tg_id: int) -> None:
+        stmt = sa.delete(Supplier).where(Supplier.tg_id == tg_id)
+        await self.session.execute(stmt)
 
     async def _get_list(self, limit: int, offset: int) -> List[Supplier]:
         res = await (
