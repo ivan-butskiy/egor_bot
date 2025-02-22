@@ -11,7 +11,7 @@ from src.suppliers import views
 from src.suppliers.bootstrap import bootstrap
 from src.suppliers.entrypoints.tg import commands as suppliers_cmd
 from src.suppliers.domain.commands import CreateSupplier
-from .states import CreateSupplierState
+from src.suppliers.entrypoints.tg.handlers.states import CreateSupplierState
 
 
 router = Router(name=__name__)
@@ -27,7 +27,7 @@ async def _get_create_supplier_response(message: types.Message, state: FSMContex
         sep='\n'
     )
 
-    await state.set_state(CreateSupplierState.contact)
+    await state.set_state(CreateSupplierState.create_contact)
     await message.answer(text=text, reply_markup=types.ReplyKeyboardRemove())
 
 
@@ -38,7 +38,7 @@ async def _get_contact_response(message: types.Message, state: FSMContext):
         sep='\n'
     )
 
-    await state.set_state(CreateSupplierState.title)
+    await state.set_state(CreateSupplierState.create_title)
     await message.answer(text=text, reply_markup=base_kbs.get_inline_nav_keyboard('supplier'))
 
 
@@ -48,7 +48,7 @@ async def _get_title_response(message: types.Message, state: FSMContext):
         markdown.text('\nВведіть унікальний псевдонім, котрий будуть бачити менеджери:'),
         sep='\n'
     )
-    await state.set_state(CreateSupplierState.alias)
+    await state.set_state(CreateSupplierState.create_alias)
     await message.answer(text=text, reply_markup=base_kbs.get_inline_nav_keyboard('supplier'))
 
 
@@ -63,7 +63,7 @@ async def _get_alias_response(message: types.Message, state: FSMContext):
         sep='\n'
     )
 
-    await state.set_state(CreateSupplierState.approve)
+    await state.set_state(CreateSupplierState.create_approve)
     await message.answer(
         text=text,
         reply_markup=types.ReplyKeyboardMarkup(
@@ -89,7 +89,7 @@ async def handle_create_supplier(message: types.Message, state: FSMContext):
     await _get_create_supplier_response(message, state)
 
 
-@router.message(CreateSupplierState.contact)
+@router.message(CreateSupplierState.create_contact)
 async def handle_contact(message: types.Message, state: FSMContext):
     if message.contact:
         tg_id = message.contact.user_id
@@ -101,42 +101,42 @@ async def handle_contact(message: types.Message, state: FSMContext):
     if await views.get_supplier(bootstrap.uow, tg_id):
         return await message.answer(text='Даний постачальник вже існує в базі даних бота.')
 
-    await state.update_data(contact=tg_id)
+    await state.update_data(create_contact=tg_id)
     await _get_contact_response(message, state)
 
 
-@router.message(CreateSupplierState.title, F.text)
+@router.message(CreateSupplierState.create_title, F.text)
 async def handle_title(message: types.Message, state: FSMContext):
     if not await views.check_supplier_title(bootstrap.uow, message.text):
         return await message.answer(text='Постачальник з такою назвою вже існує. Будь ласка, введіть унікальну назву.')
-    await state.update_data(title=message.text)
+    await state.update_data(create_title=message.text)
     await _get_title_response(message, state)
 
 
-@router.message(CreateSupplierState.alias, F.text)
+@router.message(CreateSupplierState.create_alias, F.text)
 async def handle_alias(message: types.Message, state: FSMContext):
     if not await views.check_supplier_alias(bootstrap.uow, message.text):
         return await message.answer(
             text='Постачальник з таким псевдонімом вже існує. Будь ласка, введіть унікальний псевдонім.'
         )
 
-    await state.update_data(alias=message.text)
+    await state.update_data(create_alias=message.text)
     await _get_alias_response(message, state)
 
 
-@router.message(CreateSupplierState.approve, F.text == 'Назад ⬅')
+@router.message(CreateSupplierState.create_approve, F.text == 'Назад ⬅')
 async def handle_supplier_back(message: types.Message, state: FSMContext):
     await _get_title_response(message, state)
 
 
-@router.message(CreateSupplierState.approve, F.text == 'Підтвердити ✅')
+@router.message(CreateSupplierState.create_approve, F.text == 'Підтвердити ✅')
 @auth_decorator
 async def handle_approve(message: types.Message, state: FSMContext, user: User):
     data: dict = await state.get_data()
     cmd = CreateSupplier(
-        tg_id=data['contact'],
-        title=data['title'],
-        alias=data['alias']
+        tg_id=data['create_contact'],
+        title=data['create_title'],
+        alias=data['create_alias']
     )
     await bootstrap.handle(cmd)
     await _get_approve_response(message, state, user)
@@ -152,7 +152,7 @@ async def handle_back(callback: types.CallbackQuery, state: FSMContext):
 
 
 _STATE_BACK_MAP = {
-    CreateSupplierState.title: _get_create_supplier_response,
-    CreateSupplierState.alias: _get_contact_response,
-    CreateSupplierState.approve: _get_title_response,
+    CreateSupplierState.create_title: _get_create_supplier_response,
+    CreateSupplierState.create_alias: _get_contact_response,
+    CreateSupplierState.create_approve: _get_title_response,
 }

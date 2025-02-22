@@ -15,7 +15,7 @@ async def get_suppliers(
         return items, count
 
 
-async def get_supplier(uow: AbstractUnitOfWork, tg_id: int) -> Supplier:
+async def get_supplier(uow: AbstractUnitOfWork, tg_id: int, exclude_tg_id: int = None) -> Supplier:
     async with uow:
         return await uow.suppliers.get(tg_id)
 
@@ -30,11 +30,19 @@ async def exists_suppliers(uow: AbstractUnitOfWork) -> bool:
         return await uow.suppliers.exists()
 
 
-async def check_supplier_title(uow: AbstractUnitOfWork, title: str) -> bool:
+async def check_supplier_title(
+        uow: AbstractUnitOfWork,
+        title: str,
+        exclude_tg_id: int = None
+) -> bool:
     async with uow:
-        return not await uow.suppliers.exists_by_title(title)
+        return not await uow.suppliers.exists_by_title(title, exclude_tg_id)
 
 
-async def check_supplier_alias(uow: AbstractUnitOfWork, alias: str) -> bool:
+async def check_supplier_alias(
+        uow: AbstractUnitOfWork,
+        alias: str,
+        exclude_tg_id: int = None
+) -> bool:
     async with uow:
-        return not await uow.suppliers.exists_by_alias(alias)
+        return not await uow.suppliers.exists_by_alias(alias, exclude_tg_id)

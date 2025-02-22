@@ -9,7 +9,13 @@ from src.app.entrypoints.tg.handlers.keyboards import get_start_kb
 from src.suppliers import views, Supplier
 from src.suppliers.bootstrap import bootstrap
 from src.suppliers.entrypoints.tg.handlers.create import router as create_router
-from src.suppliers.entrypoints.tg import commands as cmd, keyboards as kb, filters
+from src.suppliers.entrypoints.tg.handlers.update import router as update_router
+from src.suppliers.entrypoints.tg import commands as cmd, keyboards as kb
+from src.suppliers.entrypoints.tg.filters import (
+    SupplierItemFilter,
+    PaginateSuppliersFilter,
+    SupplierItemActionEnum
+)
 
 
 router = Router(name=__name__)
@@ -42,11 +48,11 @@ async def handle_get_suppliers(message: types.Message, user: User):
     )
 
 
-@router.callback_query(filters.PaginateSuppliersFilter.filter())
+@router.callback_query(PaginateSuppliersFilter.filter())
 @auth_decorator
 async def handle_paginate_suppliers(
         callback_query: types.CallbackQuery,
-        callback_data: filters.PaginateSuppliersFilter,
+        callback_data: PaginateSuppliersFilter,
         user: User
 ):
     page = callback_data.page
@@ -59,11 +65,11 @@ async def handle_paginate_suppliers(
     )
 
 
-@router.callback_query(filters.SupplierItemFilter.filter())
+@router.callback_query(SupplierItemFilter.filter(F.action == SupplierItemActionEnum.get))
 @auth_decorator
 async def handle_supplier_item(
         callback_query: types.CallbackQuery,
-        callback_data: filters.SupplierItemFilter,
+        callback_data: SupplierItemFilter,
         user: User
 ):
     supplier: Supplier = await views.get_supplier(bootstrap.uow, callback_data.tg_id)
@@ -77,10 +83,11 @@ async def handle_supplier_item(
     await callback_query.bot.send_message(
         chat_id=callback_query.from_user.id,
         text=html.bold(text),
-        reply_markup=kb.get_supplier_item_kb(user)
+        reply_markup=kb.get_supplier_item_kb(user, supplier)
     )
 
 
 router.include_routers(
-    create_router
+    create_router,
+    update_router
 )

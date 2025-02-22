@@ -16,8 +16,8 @@ class AbstractRepository(abc.ABC):
         await self._add(supplier)
         self.seen.add(supplier)
 
-    async def get(self, id_: int) -> Supplier:
-        user = await self._get(id_)
+    async def get(self, id_: int, exclude_id: int = None) -> Supplier:
+        user = await self._get(id_, exclude_id)
         if user:
             self.seen.add(user)
         return user
@@ -33,18 +33,18 @@ class AbstractRepository(abc.ABC):
     async def exists(self) -> bool:
         return await self._exists()
 
-    async def exists_by_title(self, title: str) -> bool:
-        return await self._exists_by_title(title)
+    async def exists_by_title(self, title: str, exclude_tg_id: int = None) -> bool:
+        return await self._exists_by_title(title, exclude_tg_id)
 
-    async def exists_by_alias(self, alias: str) -> bool:
-        return await self._exists_by_alias(alias)
+    async def exists_by_alias(self, alias: str, exclude_tg_id: int = None) -> bool:
+        return await self._exists_by_alias(alias, exclude_tg_id)
 
     @abc.abstractmethod
     async def _add(self, user: Supplier):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def _get(self, tg_id) -> Supplier:
+    async def _get(self, tg_id, exclude_id: int = None) -> Supplier:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -60,11 +60,11 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def _exists_by_title(self, title: str) -> bool:
+    async def _exists_by_title(self, title: str, exclude_tg_id: int = None) -> bool:
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def _exists_by_alias(self, title: str) -> bool:
+    async def _exists_by_alias(self, title: str, exclude_tg_id: int = None) -> bool:
         raise NotImplementedError
 
 
@@ -78,13 +78,11 @@ class SqlAlchemyRepository(AbstractRepository):
         self.seen.add(supplier)
         self.session.add(supplier)
 
-    async def _get(self, tg_id: int) -> Supplier:
-        res = await (
-            self.session.execute(
-                sa.select(Supplier)
-                .where(Supplier.tg_id == tg_id)
-            )
-        )
+    async def _get(self, tg_id: int, exclude_id: int = None) -> Supplier:
+        stmt = sa.select(Supplier).where(Supplier.tg_id == tg_id)
+        if exclude_id:
+            stmt = stmt.where(Supplier.tg_id != exclude_id)
+        res = await self.session.execute(stmt)
         return res.scalar()
 
     async def _get_list(self, limit: int, offset: int) -> List[Supplier]:
@@ -116,7 +114,7 @@ class SqlAlchemyRepository(AbstractRepository):
         res = await self.session.execute(sa.select(stmt))
         return res.scalar()
 
-    async def _exists_by_title(self, title: str) -> bool:
+    async def _exists_by_title(self, title: str, exclude_tg_id: int = None) -> bool:
         stmt = (
             sa.select(sa.true())
             .select_from(Supplier)
@@ -124,16 +122,22 @@ class SqlAlchemyRepository(AbstractRepository):
             .exists()
         )
 
+        if exclude_tg_id:
+            stmt = stmt.where(Supplier.tg_id != exclude_tg_id)
+
         res = await self.session.execute(sa.select(stmt))
         return res.scalar()
 
-    async def _exists_by_alias(self, alias: str) -> bool:
+    async def _exists_by_alias(self, alias: str, exclude_tg_id: int = None) -> bool:
         stmt = (
             sa.select(sa.true())
             .select_from(Supplier)
             .where(Supplier.alias == alias)
             .exists()
         )
+
+        if exclude_tg_id:
+            stmt = stmt.where(Supplier.tg_id != exclude_tg_id)
 
         res = await self.session.execute(sa.select(stmt))
         return res.scalar()

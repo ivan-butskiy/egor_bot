@@ -15,8 +15,23 @@ async def create_supplier(cmd: commands.CreateSupplier, uow: AbstractUnitOfWork)
         await uow.commit()
 
 
+async def update_supplier(cmd: commands.UpdateSupplier, uow: AbstractUnitOfWork):
+    async with uow:
+        instance: Supplier = await uow.suppliers.get(cmd.tg_id)
+
+        if cmd.new_tg_id:
+            instance.tg_id = cmd.new_tg_id
+        if cmd.title:
+            instance.title = cmd.title
+        if cmd.alias:
+            instance.alias = cmd.alias
+        await uow.commit()
+
+
 COMMAND_HANDLERS = {
-    commands.CreateSupplier: create_supplier
+    commands.CreateSupplier: create_supplier,
+    commands.UpdateSupplier: update_supplier
 }
+
 
 EVENT_HANDLERS = {}

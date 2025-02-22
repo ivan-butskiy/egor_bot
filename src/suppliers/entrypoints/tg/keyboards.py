@@ -4,7 +4,12 @@ from aiogram import types
 
 from src.suppliers import Supplier
 from src.users import User
-from src.suppliers.entrypoints.tg import commands as cmd, filters
+from src.suppliers.entrypoints.tg import commands as cmd
+from src.suppliers.entrypoints.tg.filters import (
+    PaginateSuppliersFilter,
+    SupplierItemFilter,
+    SupplierItemActionEnum
+)
 
 
 def get_suppliers_kb(count: int) -> types.ReplyKeyboardMarkup:
@@ -31,9 +36,15 @@ def get_suppliers_list_kb(
 ) -> types.InlineKeyboardMarkup:
 
     buttons = [
-        [types.InlineKeyboardButton(
-            text=i.title if user.is_admin else i.alias,
-            callback_data=filters.SupplierItemFilter(tg_id=i.tg_id).pack())]
+        [
+            types.InlineKeyboardButton(
+                text=i.title if user.is_admin else i.alias,
+                callback_data=SupplierItemFilter(
+                    tg_id=i.tg_id,
+                    action=SupplierItemActionEnum.get)
+                .pack()
+            )
+        ]
         for i in items
     ]
 
@@ -43,14 +54,14 @@ def get_suppliers_list_kb(
             paginate_buttons.append(
                 types.InlineKeyboardButton(
                     text='⬅ Назад',
-                    callback_data=filters.PaginateSuppliersFilter(page=page - 1).pack()
+                    callback_data=PaginateSuppliersFilter(page=page - 1).pack()
                 )
             )
         if count > page * page_size:
             paginate_buttons.append(
                 types.InlineKeyboardButton(
                     text='Вперед ➡',
-                    callback_data=filters.PaginateSuppliersFilter(page=page + 1).pack()
+                    callback_data=PaginateSuppliersFilter(page=page + 1).pack()
                 )
             )
         buttons.append(paginate_buttons)
@@ -58,17 +69,24 @@ def get_suppliers_list_kb(
     return types.InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-def get_supplier_item_kb(user: User):
-    buttons = [[types.KeyboardButton(text=cmd.SuppliersCommands.create_order)]]
+def get_supplier_item_kb(user: User, supplier: Supplier) -> types.InlineKeyboardMarkup:
+    buttons = [
+        [types.InlineKeyboardButton(
+            text=cmd.SuppliersCommands.create_order,
+            callback_data=SupplierItemFilter(tg_id=supplier.tg_id, action=SupplierItemActionEnum.create_order).pack()
+        )]
+    ]
 
     if user.is_admin:
-        buttons.append([
-            types.KeyboardButton(text=cmd.SuppliersCommands.edit_supplier),
-            types.KeyboardButton(text=cmd.SuppliersCommands.remove_supplier),
-        ])
+        edit_btn = types.InlineKeyboardButton(
+            text=cmd.SuppliersCommands.edit_supplier,
+            callback_data=SupplierItemFilter(tg_id=supplier.tg_id, action=SupplierItemActionEnum.edit).pack()
+        )
+        remove_btn = types.InlineKeyboardButton(
+            text=cmd.SuppliersCommands.remove_supplier,
+            callback_data=SupplierItemFilter(tg_id=supplier.tg_id, action=SupplierItemActionEnum.remove).pack()
+        )
+        buttons.append([edit_btn])
+        buttons.append([remove_btn])
 
-    return types.ReplyKeyboardMarkup(
-        keyboard=buttons,
-        resize_keyboard=True,
-        one_time_keyboard=True
-    )
+    return types.InlineKeyboardMarkup(inline_keyboard=buttons)

@@ -22,4 +22,3 @@ def get_bootstrap(
 
 
 bootstrap = get_bootstrap()
-
