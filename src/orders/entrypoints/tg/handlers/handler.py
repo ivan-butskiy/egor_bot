@@ -13,6 +13,7 @@ from src.orders.entrypoints.tg.filters import (
     PaginateOrdersFilter,
     OrderItemActionEnum
 )
+from .create import router as create_router
 
 
 router = Router(name=__name__)
@@ -30,6 +31,11 @@ async def handle_orders(message: types.Message, user: User):
         )
         return
     await message.answer(
-        text='',
+        text='Оберіть замовлення:',
         reply_markup=kb.get_orders_list_kb(user, items, count)
     )
+
+
+router.include_routers(
+    create_router
+)

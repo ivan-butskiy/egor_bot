@@ -78,9 +78,8 @@ def get_user_item_kb(user: User) -> types.InlineKeyboardMarkup:
         callback_data=UserItemFilter(tg_id=user.tg_id, action=UserItemActionEnum.delete).pack()
     )
 
-    buttons = [
-        [edit_btn],
-        [delete_btn]
-    ]
+    buttons = [[edit_btn]]
+    if not user.is_admin:
+        buttons.append([delete_btn])
 
     return types.InlineKeyboardMarkup(inline_keyboard=buttons)

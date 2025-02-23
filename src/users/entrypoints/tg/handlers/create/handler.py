@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils import markdown
 
 from src.app.infrastructure.tg.client import find_user
-from src.app.entrypoints.tg.handlers import keyboards as base_kbs, callbacks as base_cbs
+from src.app.entrypoints.tg.handlers import keyboards as base_kbs
 from src.app.entrypoints.tg.utils import auth_decorator
 from src.users import views
 from src.users.bootstrap import bootstrap

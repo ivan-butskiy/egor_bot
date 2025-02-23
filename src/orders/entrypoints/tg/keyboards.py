@@ -21,25 +21,19 @@ def get_orders_list_kb(
 ) -> types.InlineKeyboardMarkup:
 
     def get_btn_text(order: Order) -> str:
-        if user.is_admin:
-            return markdown.text(
-                markdown.hbold(order.id),
-                markdown.text(
-                    markdown.text('Постачальник:'),
-                    markdown.italic(order.supplier.title),
-                    markdown.italic(f'({order.supplier.alias})'),
-                    sep=' '
-                ),
-                sep='\n'
-            )
-        return markdown.text(
-            markdown.hbold(order.id),
-            markdown.text(
-                markdown.text('Постачальник: '),
-                markdown.italic(order.supplier.alias)
-            ),
-            sep='\n'
-        )
+        content = f'# {order.id}, {order.created_at_as_tz().strftime('%Y-%m-%d %H:%M')}.'
+        supplier_text = None
+
+        if user.is_admin and order.supplier:
+            supplier_text = f'{order.supplier.title} ({order.supplier.alias})'
+
+        elif order.supplier:
+            supplier_text = order.supplier.alias
+
+        if supplier_text:
+            content += f' {supplier_text}'
+
+        return content
 
     buttons = [
         [
