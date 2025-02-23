@@ -1,16 +1,17 @@
 from dataclasses import dataclass
+
 from src.app.domain.commands import BaseCommand
 
 
 @dataclass
-class CreateSupplier(BaseCommand):
+class CreateSupplierCommand(BaseCommand):
     tg_id: int
     title: str
     alias: str
 
 
 @dataclass
-class UpdateSupplier(BaseCommand):
+class UpdateSupplierCommand(BaseCommand):
     tg_id: int
     new_tg_id: int = None
     title: str = None
@@ -18,5 +19,5 @@ class UpdateSupplier(BaseCommand):
 
 
 @dataclass
-class DeleteSupplier(BaseCommand):
+class DeleteSupplierCommand(BaseCommand):
     tg_id: int

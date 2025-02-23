@@ -5,7 +5,7 @@ from aiogram.utils import markdown
 from src.app.entrypoints.tg.utils import auth_decorator
 from src.app.entrypoints.tg.handlers import keyboards as base_kbs
 from src.users import User
-from src.suppliers.domain.commands import DeleteSupplier
+from src.suppliers.domain.commands import DeleteSupplierCommand
 from src.suppliers.bootstrap import bootstrap
 from src.suppliers.entrypoints.tg.filters import SupplierItemFilter, SupplierItemActionEnum
 from .keyboards import get_delete_supplier_keyboard
@@ -42,7 +42,7 @@ async def handle_approve_delete(
         callback_data: DeleteSupplierFilter,
         user: User
 ):
-    cmd = DeleteSupplier(tg_id=callback_data.tg_id)
+    cmd = DeleteSupplierCommand(tg_id=callback_data.tg_id)
     await bootstrap.handle(cmd)
     await callback_query.answer()
     await callback_query.bot.send_message(

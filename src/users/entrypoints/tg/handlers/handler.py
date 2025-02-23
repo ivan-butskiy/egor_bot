@@ -10,6 +10,7 @@ from src.users.entrypoints.tg.filters import (
     PaginateUsersFilter,
     UserItemActionEnum
 )
+from .create import router as create_router
 
 
 router = Router(name=__name__)
@@ -68,3 +69,8 @@ async def handle_supplier_item(
         text=text,
         reply_markup=kb.get_user_item_kb(user)
     )
+
+
+router.include_routers(
+    create_router
+)

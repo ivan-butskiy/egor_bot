@@ -13,7 +13,7 @@ def get_to_the_head_kb():
 def get_start_kb(user: User) -> types.ReplyKeyboardMarkup:
     buttons = [
         [types.KeyboardButton(text=cmd.StartKbCommands.suppliers)],
-        [types.KeyboardButton(text=cmd.StartKbCommands.orders)],
+        [types.KeyboardButton(text=cmd.StartKbCommands.orders)]
     ]
 
     if user.is_admin:

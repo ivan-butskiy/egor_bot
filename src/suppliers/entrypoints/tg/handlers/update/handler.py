@@ -8,7 +8,7 @@ from src.app.entrypoints.tg.utils import auth_decorator
 from src.app.entrypoints.tg.handlers import keyboards as base_kbs
 from src.users import User
 from src.suppliers import views
-from src.suppliers.domain.commands import UpdateSupplier
+from src.suppliers.domain.commands import UpdateSupplierCommand
 from src.suppliers.bootstrap import bootstrap
 from src.suppliers.entrypoints.tg.filters import SupplierItemFilter, SupplierItemActionEnum
 from src.suppliers.entrypoints.tg.handlers.states import UpdateSupplierState
@@ -25,8 +25,8 @@ async def handle_edit_supplier(
         callback_data: SupplierItemFilter,
         state: FSMContext
 ) -> None:
-    await state.update_data(update_tg_id=callback_data.tg_id)
-    await state.set_state(UpdateSupplierState.update_tg_id)
+    await state.update_data(update_supplier_tg_id=callback_data.tg_id)
+    await state.set_state(UpdateSupplierState.update_supplier_tg_id)
 
     text = markdown.text(
         'Будь ласка, оберіть, що ви хочете змінити для постачальника:'
@@ -46,7 +46,7 @@ async def set_contact_state(
         state: FSMContext
 ) -> None:
     await callback_query.answer()
-    await state.set_state(UpdateSupplierState.update_contact)
+    await state.set_state(UpdateSupplierState.update_supplier_contact)
     text = markdown.text(
         '\nВведіть нікнейм Telegram, номер телефону в форматі +380********* або ж поділіться контактом. '
         'Якщо ви бажаєте знайти користувача за номером телефону, переконайтесь, що він є в ваших контактах.'
@@ -63,7 +63,7 @@ async def set_title_state(
         state: FSMContext
 ) -> None:
     await callback_query.answer()
-    await state.set_state(UpdateSupplierState.update_title)
+    await state.set_state(UpdateSupplierState.update_supplier_title)
     await callback_query.bot.send_message(
         chat_id=callback_query.from_user.id,
         text='Введіть унікальну назву, котру буде бачити лише адмін:'
@@ -76,7 +76,7 @@ async def set_alias_state(
         state: FSMContext
 ) -> None:
     await callback_query.answer()
-    await state.set_state(UpdateSupplierState.update_title)
+    await state.set_state(UpdateSupplierState.update_supplier_title)
     await callback_query.bot.send_message(
         chat_id=callback_query.from_user.id,
         text='Введіть унікальний псевдонім, котрий будуть бачити менеджери:'
@@ -99,7 +99,7 @@ async def set_cancel_state(
     )
 
 
-@router.message(UpdateSupplierState.update_contact)
+@router.message(UpdateSupplierState.update_supplier_contact)
 async def handle_contact(message: types.Message, state: FSMContext):
     if message.contact:
         tg_id = message.contact.user_id
@@ -109,14 +109,14 @@ async def handle_contact(message: types.Message, state: FSMContext):
         return await message.answer(text='Нажаль, користувач не знайдений. Спробуйте ще раз ввести його контакт.')
 
     data = await state.get_data()
-    current_tg_id = data['update_tg_id']
+    current_tg_id = data['update_supplier_tg_id']
 
     if await views.get_supplier(bootstrap.uow, tg_id, current_tg_id):
         return await message.answer(text='Даний постачальник вже існує в базі даних бота.')
 
     await state.clear()
 
-    cmd = UpdateSupplier(
+    cmd = UpdateSupplierCommand(
         tg_id=current_tg_id,
         new_tg_id=tg_id
     )
@@ -135,14 +135,14 @@ async def handle_contact(message: types.Message, state: FSMContext):
     )
 
 
-@router.message(UpdateSupplierState.update_title)
+@router.message(UpdateSupplierState.update_supplier_title)
 async def handle_title(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    current_tg_id = data['update_tg_id']
+    current_tg_id = data['update_supplier_tg_id']
     if not await views.check_supplier_title(bootstrap.uow, message.text, current_tg_id):
         return await message.answer(text='Постачальник з такою назвою вже існує. Будь ласка, введіть унікальну назву.')
 
-    cmd = UpdateSupplier(
+    cmd = UpdateSupplierCommand(
         tg_id=current_tg_id,
         title=message.text
     )
@@ -161,16 +161,16 @@ async def handle_title(message: types.Message, state: FSMContext):
     )
 
 
-@router.message(UpdateSupplierState.update_title)
+@router.message(UpdateSupplierState.update_supplier_alias)
 async def handle_alias(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    current_tg_id = data['update_tg_id']
+    current_tg_id = data['update_supplier_tg_id']
     if not await views.check_supplier_alias(bootstrap.uow, message.text, current_tg_id):
         return await message.answer(
             text='Постачальник з таким псевдонімом вже існує. Будь ласка, введіть унікальний псевдонім.'
         )
 
-    cmd = UpdateSupplier(
+    cmd = UpdateSupplierCommand(
         tg_id=current_tg_id,
         alias=message.text
     )

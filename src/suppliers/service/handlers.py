@@ -3,7 +3,7 @@ from src.suppliers.domain import commands
 from src.suppliers import Supplier
 
 
-async def create_supplier(cmd: commands.CreateSupplier, uow: AbstractUnitOfWork):
+async def create_supplier(cmd: commands.CreateSupplierCommand, uow: AbstractUnitOfWork):
     async with uow:
         instance = Supplier(
             tg_id=cmd.tg_id,
@@ -15,7 +15,7 @@ async def create_supplier(cmd: commands.CreateSupplier, uow: AbstractUnitOfWork)
         await uow.commit()
 
 
-async def update_supplier(cmd: commands.UpdateSupplier, uow: AbstractUnitOfWork):
+async def update_supplier(cmd: commands.UpdateSupplierCommand, uow: AbstractUnitOfWork):
     async with uow:
         instance: Supplier = await uow.suppliers.get(cmd.tg_id)
 
@@ -28,16 +28,16 @@ async def update_supplier(cmd: commands.UpdateSupplier, uow: AbstractUnitOfWork)
         await uow.commit()
 
 
-async def delete_supplier(cmd: commands.DeleteSupplier, uow: AbstractUnitOfWork):
+async def delete_supplier(cmd: commands.DeleteSupplierCommand, uow: AbstractUnitOfWork):
     async with uow:
         await uow.suppliers.delete(cmd.tg_id)
         await uow.commit()
 
 
 COMMAND_HANDLERS = {
-    commands.CreateSupplier: create_supplier,
-    commands.UpdateSupplier: update_supplier,
-    commands.DeleteSupplier: delete_supplier
+    commands.CreateSupplierCommand: create_supplier,
+    commands.UpdateSupplierCommand: update_supplier,
+    commands.DeleteSupplierCommand: delete_supplier
 }
 
 EVENT_HANDLERS = {}
