@@ -28,7 +28,7 @@ class User:
     def button_repr(self):
         if self.is_admin:
             return f'⭐ {self.full_name}'
-        return self.first_name
+        return self.full_name
 
     def __hash__(self) -> int:
         return hash(self.tg_id)

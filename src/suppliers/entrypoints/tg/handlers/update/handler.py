@@ -135,7 +135,7 @@ async def handle_contact(message: types.Message, state: FSMContext):
     )
 
 
-@router.message(UpdateSupplierState.update_supplier_title)
+@router.message(UpdateSupplierState.update_supplier_title, F.text)
 async def handle_title(message: types.Message, state: FSMContext):
     data = await state.get_data()
     current_tg_id = data['update_supplier_tg_id']
@@ -161,7 +161,7 @@ async def handle_title(message: types.Message, state: FSMContext):
     )
 
 
-@router.message(UpdateSupplierState.update_supplier_alias)
+@router.message(UpdateSupplierState.update_supplier_alias, F.text)
 async def handle_alias(message: types.Message, state: FSMContext):
     data = await state.get_data()
     current_tg_id = data['update_supplier_tg_id']

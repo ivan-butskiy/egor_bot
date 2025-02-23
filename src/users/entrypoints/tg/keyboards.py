@@ -3,12 +3,12 @@ from typing import List
 from aiogram import types
 
 from src.users import User
-from src.users.entrypoints.tg import commands as cmd
 from .filters import (
     PaginateUsersFilter,
     UserItemActionEnum,
     UserItemFilter
 )
+from . import commands as cmd
 
 
 def get_users_kb(count: int) -> types.ReplyKeyboardMarkup:
@@ -68,4 +68,19 @@ def get_users_list_kb(
 
 
 def get_user_item_kb(user: User) -> types.InlineKeyboardMarkup:
-    return
+    edit_btn = types.InlineKeyboardButton(
+        text=cmd.UsersCommand.edit_user,
+        callback_data=UserItemFilter(tg_id=user.tg_id, action=UserItemActionEnum.edit).pack()
+    )
+
+    delete_btn = types.InlineKeyboardButton(
+        text=cmd.UsersCommand.delete_user,
+        callback_data=UserItemFilter(tg_id=user.tg_id, action=UserItemActionEnum.delete).pack()
+    )
+
+    buttons = [
+        [edit_btn],
+        [delete_btn]
+    ]
+
+    return types.InlineKeyboardMarkup(inline_keyboard=buttons)

@@ -1,4 +1,4 @@
-from aiogram import Router, F, types, html
+from aiogram import Router, F, types
 from aiogram.utils import markdown
 
 from src.app.entrypoints.tg.handlers import commands as base_cmd
@@ -11,6 +11,7 @@ from src.users.entrypoints.tg.filters import (
     UserItemActionEnum
 )
 from .create import router as create_router
+from .update import router as update_router
 
 
 router = Router(name=__name__)
@@ -72,5 +73,6 @@ async def handle_supplier_item(
 
 
 router.include_routers(
-    create_router
+    create_router,
+    update_router
 )

@@ -10,3 +10,16 @@ class CreateUserCommand(BaseCommand):
     first_name: str
     last_name: str
     type: UserTypeEnum
+
+
+@dataclass
+class UpdateUserCommand(BaseCommand):
+    tg_id: int
+    first_name: str = None
+    last_name: str = None
+
+
+@dataclass
+class DeleteUserCommand(BaseCommand):
+    tg_id: int
+

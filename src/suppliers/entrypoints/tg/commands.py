@@ -9,4 +9,4 @@ class SuppliersCommands:
     # compatible to admin
     create_supplier: str = '✅ Додати постачальника'
     edit_supplier: str = '📝 Редагувати'
-    remove_supplier: str = '❌ Видалити'
+    delete_supplier: str = '❌ Видалити'

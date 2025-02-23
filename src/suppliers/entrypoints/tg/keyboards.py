@@ -82,11 +82,12 @@ def get_supplier_item_kb(user: User, supplier: Supplier) -> types.InlineKeyboard
             text=cmd.SuppliersCommands.edit_supplier,
             callback_data=SupplierItemFilter(tg_id=supplier.tg_id, action=SupplierItemActionEnum.edit).pack()
         )
-        remove_btn = types.InlineKeyboardButton(
-            text=cmd.SuppliersCommands.remove_supplier,
+
+        delete_btn = types.InlineKeyboardButton(
+            text=cmd.SuppliersCommands.delete_supplier,
             callback_data=SupplierItemFilter(tg_id=supplier.tg_id, action=SupplierItemActionEnum.delete).pack()
         )
         buttons.append([edit_btn])
-        buttons.append([remove_btn])
+        buttons.append([delete_btn])
 
     return types.InlineKeyboardMarkup(inline_keyboard=buttons)
