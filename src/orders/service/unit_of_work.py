@@ -4,21 +4,21 @@ from sqlalchemy.orm import Session
 
 from src.app.service.unit_of_work import AbstractUnitOfWork as _AbstractUnitOfWork
 from src.app.infrastructure.db.session import SESSION_FACTORY
-from src.suppliers.adapters.repository import AbstractRepository, SqlAlchemyRepository
+from src.orders.adapters.repository import AbstractRepository, SQLAlchemyRepository
 
 
 class AbstractUnitOfWork(_AbstractUnitOfWork, abc.ABC):
-    suppliers: AbstractRepository
+    orders: AbstractRepository
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
-    def __init__(self, session_factory: Session = SESSION_FACTORY):
-        self.session_factory = session_factory
+    def __init__(self, session: Session = SESSION_FACTORY):
+        self.session_factory = session
 
     async def __aenter__(self) -> 'AbstractUnitOfWork':
         self.session = self.session_factory()
-        self.suppliers = SqlAlchemyRepository(self.session)
+        self.orders = SQLAlchemyRepository(self.session)
         return await super().__aenter__()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
