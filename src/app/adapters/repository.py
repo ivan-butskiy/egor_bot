@@ -20,10 +20,10 @@ class BaseAbstractRepository(abc.ABC):
     async def delete(self, id_: int) -> None:
         await self._delete(id_)
 
-    async def get_list(self, limit: int, offset: int) -> List[Any]:
-        res = await self._get_list(limit, offset)
+    async def get_list(self, limit: int, offset: int, *args, **kwargs) -> List[Any]:
+        res = await self._get_list(limit, offset, *args, **kwargs)
         self.seen.union(res)
-        return await self._get_list(limit, offset)
+        return res
 
     async def count(self) -> int:
         return await self._count()
@@ -44,7 +44,7 @@ class BaseAbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def _get_list(self, limit: int, offset: int):
+    async def _get_list(self, limit: int, offset: int, *args, **kwargs):
         raise NotImplementedError
 
     @abc.abstractmethod
