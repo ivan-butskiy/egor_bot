@@ -24,5 +24,11 @@ class User:
             return f'{self.first_name} {self.last_name}'
         return self.first_name
 
+    @property
+    def button_repr(self):
+        if self.is_admin:
+            return f'⭐ {self.full_name}'
+        return self.first_name
+
     def __hash__(self) -> int:
         return hash(self.tg_id)

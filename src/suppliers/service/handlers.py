@@ -40,5 +40,4 @@ COMMAND_HANDLERS = {
     commands.DeleteSupplier: delete_supplier
 }
 
-
 EVENT_HANDLERS = {}

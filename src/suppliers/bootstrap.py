@@ -18,7 +18,10 @@ def get_bootstrap(
         for command_type, handler in handlers.COMMAND_HANDLERS.items()
     }
 
-    return MessageBus(uow=uow, command_handlers=injected_command_handlers)
+    return MessageBus(
+        uow=uow,
+        command_handlers=injected_command_handlers
+    )
 
 
 bootstrap = get_bootstrap()

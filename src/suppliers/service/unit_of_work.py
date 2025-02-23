@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 
 from src.app.service.unit_of_work import AbstractUnitOfWork as _AbstractUnitOfWork
 from src.app.infrastructure.db.session import SESSION_FACTORY
-from src.suppliers.adapters.repository import AbstractRepository, SqlAlchemyRepository
+from src.suppliers.adapters.repository import BaseAbstractRepository, SqlAlchemyRepository
 
 
 class AbstractUnitOfWork(_AbstractUnitOfWork, abc.ABC):
-    suppliers: AbstractRepository
+    suppliers: BaseAbstractRepository
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):

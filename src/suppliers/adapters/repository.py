@@ -4,67 +4,18 @@ from typing import Set, List
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.app.adapters.repository import BaseAbstractRepository
 from src.suppliers import Supplier
 
 
-class AbstractRepository(abc.ABC):
-
-    def __init__(self):
-        self.seen = set()  # type: Set[Supplier]
-
-    async def add(self, supplier: Supplier):
-        await self._add(supplier)
-        self.seen.add(supplier)
-
-    async def get(self, id_: int, exclude_id: int = None) -> Supplier:
-        user = await self._get(id_, exclude_id)
-        if user:
-            self.seen.add(user)
-        return user
-
-    async def delete(self, id_: int) -> None:
-        await self._delete(id_)
-
-    async def get_list(self, limit: int, offset: int) -> List[Supplier]:
-        res = await self._get_list(limit, offset)
-        self.seen.union(res)
-        return await self._get_list(limit, offset)
-
-    async def count(self) -> int:
-        return await self._count()
-
-    async def exists(self) -> bool:
-        return await self._exists()
+class AbstractRepository(BaseAbstractRepository, abc.ABC):
+    seen: Set[Supplier]
 
     async def exists_by_title(self, title: str, exclude_tg_id: int = None) -> bool:
         return await self._exists_by_title(title, exclude_tg_id)
 
     async def exists_by_alias(self, alias: str, exclude_tg_id: int = None) -> bool:
         return await self._exists_by_alias(alias, exclude_tg_id)
-
-    @abc.abstractmethod
-    async def _add(self, user: Supplier):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def _get(self, tg_id, exclude_id: int = None) -> Supplier:
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def _delete(self, id_: int) -> None:
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def _get_list(self, limit: int, offset: int):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def _count(self) -> int:
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def _exists(self) -> bool:
-        raise NotImplementedError
 
     @abc.abstractmethod
     async def _exists_by_title(self, title: str, exclude_tg_id: int = None) -> bool:

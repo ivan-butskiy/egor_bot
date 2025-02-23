@@ -8,14 +8,11 @@ from src.users import views as user_views
 from src.users.bootstrap import bootstrap as users_bootstrap
 
 
-users_bootstrap = users_bootstrap()
-
-
 def auth_decorator(func: Callable) -> Any:
     @wraps(func)
     async def wrapper(*args, **kwargs):
         if event := next(filter(lambda a: isinstance(a, (types.Message, types.CallbackQuery)), args), None):
-            if not (user := await user_views.get_user(event.from_user.id, users_bootstrap.uow)):
+            if not (user := await user_views.get_user(users_bootstrap.uow, event.from_user.id)):
                 return
             sig_params = extend_parameters(func, user, users_bootstrap, *args)
             await func(**sig_params, **kwargs)

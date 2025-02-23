@@ -17,7 +17,7 @@ async def get_suppliers(
 
 async def get_supplier(uow: AbstractUnitOfWork, tg_id: int, exclude_tg_id: int = None) -> Supplier:
     async with uow:
-        return await uow.suppliers.get(tg_id)
+        return await uow.suppliers.get(tg_id, exclude_tg_id)
 
 
 async def get_suppliers_count(uow: AbstractUnitOfWork) -> int:

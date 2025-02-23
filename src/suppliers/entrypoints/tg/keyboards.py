@@ -4,12 +4,12 @@ from aiogram import types
 
 from src.suppliers import Supplier
 from src.users import User
-from src.suppliers.entrypoints.tg import commands as cmd
 from src.suppliers.entrypoints.tg.filters import (
     PaginateSuppliersFilter,
     SupplierItemFilter,
     SupplierItemActionEnum
 )
+from . import commands as cmd
 
 
 def get_suppliers_kb(count: int) -> types.ReplyKeyboardMarkup:

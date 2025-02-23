@@ -11,29 +11,24 @@ def get_to_the_head_kb():
 
 
 def get_start_kb(user: User) -> types.ReplyKeyboardMarkup:
+    buttons = [
+        [types.KeyboardButton(text=cmd.StartKbCommands.suppliers)],
+        [types.KeyboardButton(text=cmd.StartKbCommands.orders)],
+    ]
+
     if user.is_admin:
-        return types.ReplyKeyboardMarkup(
-            keyboard=[
-                [types.KeyboardButton(text=cmd.StartKbCommands.suppliers),
-                 types.KeyboardButton(text=cmd.StartKbCommands.orders)],
-            ],
-            resize_keyboard=True,
-            input_field_placeholder='Оберіть дію',
-            one_time_keyboard=True
-        )
+        buttons.append([types.KeyboardButton(text=cmd.StartKbCommands.users)])
     return types.ReplyKeyboardMarkup(
-        keyboard=[
-            [types.KeyboardButton(text=cmd.StartKbCommands.create_order)],
-            [types.KeyboardButton(text=cmd.StartKbCommands.order_history)],
-        ],
+        keyboard=buttons,
         resize_keyboard=True,
-        input_field_placeholder='Оберіть дію'
+        input_field_placeholder='Оберіть дію:',
+        one_time_keyboard=True
     )
 
 
 def get_inline_nav_keyboard(entity: str):
     return types.InlineKeyboardMarkup(
         inline_keyboard=[
-            [types.InlineKeyboardButton(text='Назад ⬅', callback_data=BackCallback(entity=entity).pack())]
+            [types.InlineKeyboardButton(text='⬅ Назад', callback_data=BackCallback(entity=entity).pack())]
         ]
     )

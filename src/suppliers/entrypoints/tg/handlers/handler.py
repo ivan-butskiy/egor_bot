@@ -28,9 +28,9 @@ async def handle_suppliers(message: types.Message, user: User):
     count = await views.get_suppliers_count(bootstrap.uow)
     if not user.is_admin and not count:
         markup = get_start_kb(user)
-        text = 'Наразі немає жодного постачальника. Оберіть дію'
+        text = 'Наразі немає жодного постачальника. Оберіть дію:'
     else:
-        text = 'Оберіть дію'
+        text = 'Оберіть дію:'
         markup = kb.get_suppliers_kb(count)
     await message.answer(
         text=text,
