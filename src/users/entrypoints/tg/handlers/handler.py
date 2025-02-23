@@ -12,6 +12,7 @@ from src.users.entrypoints.tg.filters import (
 )
 from .create import router as create_router
 from .update import router as update_router
+from .delete import router as delete_router
 
 
 router = Router(name=__name__)
@@ -74,5 +75,6 @@ async def handle_supplier_item(
 
 router.include_routers(
     create_router,
-    update_router
+    update_router,
+    delete_router
 )

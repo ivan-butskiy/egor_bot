@@ -8,6 +8,6 @@ class DeleteSupplierActionsEnum(enum.StrEnum):
     reject = 'reject'
 
 
-class DeleteSupplierFilter(CallbackData, prefix='edit_supplier'):
+class DeleteSupplierFilter(CallbackData, prefix='delete_supplier'):
     tg_id: int
     action: DeleteSupplierActionsEnum
